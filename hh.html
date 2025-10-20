@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Perlengkapan APD Pekerjaan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #dataList {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .item {
+            border-bottom: 1px solid #ddd;
+            padding: 10px 0;
+        }
+        .item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Input kerusakan APD Pekerjaan</h1>
+    
+    <form id="apdForm">
+        <label for="nama">Nama Perlengkapan APD:</label>
+        <input type="text" id="nama" required>
+        
+        <label for="jenis">Jenis Pekerjaan:</label>
+        <select id="jenis" required>
+            <option value="">Pilih Jenis Pekerjaan</option>
+            <option value="Sampler">sampler</option>
+            <option value="Surveyor">surveyor</option>
+            <option value="Preperasi">Preperasi</option>
+            <option value="Laboratorium">Laboratorium</option>
+            <option value="Driver">Driver</option>
+            <option value="Lainnya">Lainnya</option>
+        </select>
+        
+        <label for="jumlah">Jumlah:</label>
+        <input type="number" id="jumlah" min="1" required>
+        
+        <label for="deskripsi">Deskripsi/Spesifikasi:</label>
+        <textarea id="deskripsi" rows="3" placeholder="Masukkan detail seperti ukuran, Nama, dan kondisi"></textarea>
+        
+        <label for="tanggal">Tanggal Input:</label>
+        <input type="date" id="tanggal" required>
+        
+        <button type="submit">Tambah Data APD</button>
+    </form>
+    
+    <div id="dataList">
+        <h2>Daftar Perlengkapan APD</h2>
+        <div id="listItems"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('apdForm');
+        const listItems = document.getElementById('listItems');
+        
+        // Load data dari localStorage saat halaman dimuat
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem('apdData')) || [];
+            displayData(data);
+        }
+        
+        // Tampilkan data di halaman
+        function displayData(data) {
+            listItems.innerHTML = '';
+            data.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'item';
+                div.innerHTML = `
+                    <strong>${item.nama}</strong> - ${item.jenis} <br>
+                    Jumlah: ${item.jumlah} | Tanggal: ${item.tanggal} <br>
+                    Deskripsi: ${item.deskripsi} <br>
+                    <button onclick="deleteItem(${index})" style="background: #f44336; padding: 5px 10px; margin-top: 5px;">Hapus</button>
+                `;
+                listItems.appendChild(div);
+            });
+        }
+        
+        // Tambah data baru
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newItem = {
+                nama: document.getElementById('nama').value,
+                jenis: document.getElementById('jenis').value,
+                jumlah: document.getElementById('jumlah').value,
+                deskripsi: document.getElementById('deskripsi').value,
+                tanggal: document.getElementById('tanggal').value
+            };
+            
+            let data = JSON.parse(localStorage.getItem('apdData')) || [];
+            data.push(newItem);
+            localStorage.setItem('apdData', JSON.stringify(data));
+            
+            displayData(data);
+            form.reset();
+            alert('Data APD berhasil ditambahkan!');
+        });
+        
+        // Hapus item
+        function deleteItem(index) {
+            let data = JSON.parse(localStorage.getItem('apdData')) || [];
+            data.splice(index, 1);
+            localStorage.setItem('apdData', JSON.stringify(data));
+            displayData(data);
+        }
+        
+        // Load data saat halaman dimuat
+        loadData();
+    </script>
+</body>
+</html>
